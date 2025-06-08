@@ -1,6 +1,7 @@
 import Foundation
 import MultipeerConnectivity
 import CoreBluetooth
+import UIKit
 
 @objc public class NearbyMultipeer: NSObject, CBPeripheralManagerDelegate, CBPeripheralDelegate {
 
@@ -609,7 +610,7 @@ public protocol NearbyMultipeerDelegate: AnyObject {
 // MARK: - MCSessionDelegate
 
 extension NearbyMultipeer: MCSessionDelegate {
-    /* public */ func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+  public func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         // Notificar el cambio de estado de conexión
         let endpointId = peerID.displayName
 
@@ -632,7 +633,7 @@ extension NearbyMultipeer: MCSessionDelegate {
         }
     }
 
-    /* public */ func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+  public func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         // Convertir los datos recibidos a string
         if let message = String(data: data, encoding: .utf8) {
             print("Mensaje recibido de \(peerID.displayName): \(message)")
@@ -650,11 +651,11 @@ extension NearbyMultipeer: MCSessionDelegate {
         }
     }
 
-    /* public */ func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+  public func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
         // No implementado para este plugin
     }
 
-    /* public */ func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
+  public func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
         // Notificar el progreso de la transferencia
         DispatchQueue.main.async {
             self.delegate?.onPayloadTransferUpdate(
@@ -666,7 +667,7 @@ extension NearbyMultipeer: MCSessionDelegate {
         }
     }
 
-    /* public */ func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+  public func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
         if let error = error {
             print("Error al recibir recurso: \(error.localizedDescription)")
         } else {
@@ -688,7 +689,7 @@ extension NearbyMultipeer: MCSessionDelegate {
 // MARK: - MCNearbyServiceAdvertiserDelegate
 
 extension NearbyMultipeer: MCNearbyServiceAdvertiserDelegate {
-    /* public */ func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
+  public func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
         print("Invitación recibida de: \(peerID.displayName)")
 
         // Almacenar el handler para usarlo después de que el usuario acepte o rechace
@@ -704,7 +705,7 @@ extension NearbyMultipeer: MCNearbyServiceAdvertiserDelegate {
         }
     }
 
-    /* public */ func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didNotStartAdvertisingPeer error: Error) {
+  public func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didNotStartAdvertisingPeer error: Error) {
         print("Error al iniciar advertising: \(error.localizedDescription)")
         delegate?.onError(error: "Error al iniciar advertising: \(error.localizedDescription)")
     }
@@ -713,7 +714,7 @@ extension NearbyMultipeer: MCNearbyServiceAdvertiserDelegate {
 // MARK: - MCNearbyServiceBrowserDelegate
 
 extension NearbyMultipeer: MCNearbyServiceBrowserDelegate {
-    /* public */ func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
+  public func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
         print("Peer encontrado: \(peerID.displayName)")
 
         // Añadir a la lista de peers encontrados
@@ -734,7 +735,7 @@ extension NearbyMultipeer: MCNearbyServiceBrowserDelegate {
         }
     }
 
-    /* public */ func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
+  public func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
         print("Peer perdido: \(peerID.displayName)")
 
         // Eliminar de la lista de peers encontrados
@@ -746,16 +747,15 @@ extension NearbyMultipeer: MCNearbyServiceBrowserDelegate {
         }
     }
 
-    /* public */ func browser(_ browser: MCNearbyServiceBrowser, didNotStartBrowsingForPeers error: Error) {
+  public func browser(_ browser: MCNearbyServiceBrowser, didNotStartBrowsingForPeers error: Error) {
         print("Error al iniciar discovery: \(error.localizedDescription)")
         delegate?.onError(error: "Error al iniciar discovery: \(error.localizedDescription)")
     }
 }
 
 // MARK: - CBCentralManagerDelegate
-// Conformance added to class declaration
-extension NearbyMultipeer /* : CBCentralManagerDelegate */ { // Delegate conformance moved to class declaration
-    /* public */ func centralManagerDidUpdateState(_ central: CBCentralManager) {
+extension NearbyMultipeer {
+  func centralManagerDidUpdateState(_ central: CBCentralManager) {
         switch central.state {
         case .poweredOn:
             print("Bluetooth central está encendido")
@@ -778,7 +778,7 @@ extension NearbyMultipeer /* : CBCentralManagerDelegate */ { // Delegate conform
         }
     }
 
-    /* public */ func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+  func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         // Define endpointName, shouldNotifyDevice, and detectionReason locally
         let endpointName = peripheral.name ?? advertisementData[CBAdvertisementDataLocalNameKey] as? String ?? "UnknownDevice"
         var shouldNotifyDevice = true // Default behavior for now, make it mutable if logic requires
@@ -847,11 +847,9 @@ extension NearbyMultipeer /* : CBCentralManagerDelegate */ { // Delegate conform
         } // Closing brace for for (key, value) in advertisementData
 
         // Verificar datos del fabricante para identificar dispositivos Android
-        var isAndroidDevice = false
+        var isAndroidDevice = false // Reset for each discovered peripheral
         // var deviceType: UInt8 = 0 // Not needed here
         // var deviceName: String? // 'endpointName' is used
-
-        var isAndroidDevice = false // Reset for each discovered peripheral
 
         if let manufacturerData = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data {
             BleLogger.logHexData("Discovered Manufacturer Data for \(endpointName)", data: manufacturerData)
@@ -918,7 +916,7 @@ extension NearbyMultipeer /* : CBCentralManagerDelegate */ { // Delegate conform
         }
     }
 
-    /* public */ func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) { // Removed public
+  func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         let endpointId = peripheral.identifier.uuidString
         print("Conectado a dispositivo Bluetooth: \(peripheral.name ?? endpointId)")
 
@@ -937,7 +935,7 @@ extension NearbyMultipeer /* : CBCentralManagerDelegate */ { // Delegate conform
         }
     }
 
-    /* public */ func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) { // Removed public
+  func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         let endpointId = peripheral.identifier.uuidString
         print("Error al conectar con dispositivo Bluetooth: \(peripheral.name ?? endpointId), error: \(error?.localizedDescription ?? "unknown")")
 
@@ -947,7 +945,7 @@ extension NearbyMultipeer /* : CBCentralManagerDelegate */ { // Delegate conform
         }
     }
 
-    /* public */ func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) { // Removed public
+  func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         let endpointId = peripheral.identifier.uuidString
         print("Desconectado de dispositivo Bluetooth: \(peripheral.name ?? endpointId)")
 
@@ -973,9 +971,8 @@ extension NearbyMultipeer /* : CBCentralManagerDelegate */ { // Delegate conform
 }
 
 // MARK: - CBPeripheralDelegate
-// Conformance added to class declaration
-extension NearbyMultipeer /* : CBPeripheralDelegate */ { // Delegate conformance moved to class declaration
-    /* public */ func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+extension NearbyMultipeer {
+  func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let error = error {
             print("Error al descubrir servicios: \(error.localizedDescription)")
             return
@@ -989,7 +986,7 @@ extension NearbyMultipeer /* : CBPeripheralDelegate */ { // Delegate conformance
         }
     }
 
-    /* public */ func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+  func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if let error = error {
             print("Error al descubrir características: \(error.localizedDescription)")
             return
@@ -1010,7 +1007,7 @@ extension NearbyMultipeer /* : CBPeripheralDelegate */ { // Delegate conformance
         }
     }
 
-    /* public */ func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+  func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if let error = error {
             print("Error al recibir datos: \(error.localizedDescription)")
             return
@@ -1030,7 +1027,7 @@ extension NearbyMultipeer /* : CBPeripheralDelegate */ { // Delegate conformance
         }
     }
 
-    /* public */ func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+  func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         if let error = error {
             print("Error al enviar datos: \(error.localizedDescription)")
             return
@@ -1041,9 +1038,8 @@ extension NearbyMultipeer /* : CBPeripheralDelegate */ { // Delegate conformance
 }
 
 // MARK: - CBPeripheralManagerDelegate
-// Conformance added to class declaration
-extension NearbyMultipeer /* : CBPeripheralManagerDelegate */ { // Delegate conformance moved to class declaration
-    /* public */ func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
+extension NearbyMultipeer {
+  func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         switch peripheral.state {
         case .poweredOn:
             print("Bluetooth peripheral está encendido")
@@ -1066,7 +1062,7 @@ extension NearbyMultipeer /* : CBPeripheralManagerDelegate */ { // Delegate conf
         }
     }
 
-    /* public */ func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
+  func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
         if let error = error {
             print("Error al añadir servicio: \(error.localizedDescription)")
             return
@@ -1075,7 +1071,7 @@ extension NearbyMultipeer /* : CBPeripheralManagerDelegate */ { // Delegate conf
         print("Servicio añadido correctamente")
     }
 
-    /* public */ func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
+  func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
         // Respond with the device name
         if request.characteristic.uuid == NearbyMultipeer.CHARACTERISTIC_UUID {
             if let data = deviceName.data(using: .utf8) {
@@ -1089,7 +1085,7 @@ extension NearbyMultipeer /* : CBPeripheralManagerDelegate */ { // Delegate conf
         }
     }
 
-    /* public */ func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
+  func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
         for request in requests {
             if request.characteristic.uuid == NearbyMultipeer.CHARACTERISTIC_UUID,
                let data = request.value,

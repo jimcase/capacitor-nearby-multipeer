@@ -47,6 +47,7 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.bluetooth.le.ScanRecord;
 import android.os.ParcelUuid;
+import android.util.SparseArray;
 
 import androidx.annotation.RequiresPermission;
 
@@ -97,6 +98,7 @@ public class NearbyMultipeer {
                     == android.content.pm.PackageManager.PERMISSION_GRANTED;
         }
     }
+
     private boolean isAdvertising = false;
     private boolean isDiscovering = false;
     private boolean isConnected = false;
@@ -151,10 +153,10 @@ public class NearbyMultipeer {
     }
 
     public void initialize(Context context, String serviceId,
-                          ConnectionLifecycleCallback connectionCallback,
-                          EndpointDiscoveryCallback discoveryCallback,
-                          PayloadCallback payloadCallback,
-                          String serviceUUIDString) {
+                           ConnectionLifecycleCallback connectionCallback,
+                           EndpointDiscoveryCallback discoveryCallback,
+                           PayloadCallback payloadCallback,
+                           String serviceUUIDString) {
         Log.d(TAG, "[initialize] context=" + context + ", serviceId=" + serviceId + ", connectionCallback=" + connectionCallback + ", discoveryCallback=" + discoveryCallback + ", payloadCallback=" + payloadCallback + ", serviceUUIDString=" + serviceUUIDString);
         this.context = context;
         this.serviceId = serviceId;
@@ -228,8 +230,8 @@ public class NearbyMultipeer {
                                 // Create a fake DiscoveredEndpointInfo for the iOS device
                                 assert finalDeviceAddress != null;
                                 endpointDiscoveryCallback.onEndpointFound(
-                                    finalDeviceAddress,
-                                    new DiscoveredEndpointInfo(finalDeviceName, serviceId)
+                                        finalDeviceAddress,
+                                        new DiscoveredEndpointInfo(finalDeviceName, serviceId)
                                 );
                             }
                         });
@@ -273,8 +275,8 @@ public class NearbyMultipeer {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             if (context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_SCAN)
                                     == android.content.pm.PackageManager.PERMISSION_GRANTED &&
-                                context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
-                                    == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                                    context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
+                                            == android.content.pm.PackageManager.PERMISSION_GRANTED) {
                                 startBluetoothDiscovery();
                             } else {
                                 Log.w(TAG, "No se tienen permisos para reiniciar Bluetooth discovery");
@@ -376,10 +378,10 @@ public class NearbyMultipeer {
                 .build();
 
         // Datos de fabricante personalizados: NMP, v1, Android
-        byte[] manufacturerDataBytes = new byte[] {
-            (byte)0x4E, (byte)0x4D, (byte)0x50, // "NMP"
-            (byte)0x01,                         // Protocol version 1
-            (byte)0x01                          // Device type Android (0x01)
+        byte[] manufacturerDataBytes = new byte[]{
+                (byte) 0x4E, (byte) 0x4D, (byte) 0x50, // "NMP"
+                (byte) 0x01,                         // Protocol version 1
+                (byte) 0x01                          // Device type Android (0x01)
         };
 
         // Optional: Append device name to manufacturer data if needed and if space allows.
@@ -426,13 +428,13 @@ public class NearbyMultipeer {
 
         try {
             if (bleAdvertiser != null) {
-                 // Stop any previous advertising before starting new one
+                // Stop any previous advertising before starting new one
                 bleAdvertiser.stopAdvertising(bleAdvertiseCallback);
                 // Start advertising
                 bleAdvertiser.startAdvertising(settings, data, scanResponse, bleAdvertiseCallback);
                 BleLogger.info("Attempting to start BLE advertising...");
             } else {
-                 BleLogger.error("bleAdvertiser is null, cannot start advertising.");
+                BleLogger.error("bleAdvertiser is null, cannot start advertising.");
             }
         } catch (SecurityException se) {
             BleLogger.error("SecurityException while starting BLE advertising: " + se.getMessage(), se);
@@ -441,12 +443,6 @@ public class NearbyMultipeer {
         }
     }
 
-    // Advertising clásico para compatibilidad adicional
-        stopBluetoothAdvertisingClassic();
-        acceptThread = new AcceptThread();
-        acceptThread.start();
-        Log.i(TAG, "Bluetooth advertising clásico iniciado");
-    }
 
     private void stopBluetoothAdvertising() {
         Log.d(TAG, "[stopBluetoothAdvertising] acceptThread=" + acceptThread + ", serverSocket=" + serverSocket);
@@ -471,6 +467,9 @@ public class NearbyMultipeer {
         }
         // Parar advertising clásico
         stopBluetoothAdvertisingClassic();
+        acceptThread = new AcceptThread();
+        acceptThread.start();
+        Log.i(TAG, "Bluetooth advertising clásico iniciado");
     }
 
     private void stopBluetoothAdvertisingClassic() {
@@ -532,8 +531,8 @@ public class NearbyMultipeer {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if (context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_SCAN)
                         == android.content.pm.PackageManager.PERMISSION_GRANTED &&
-                    context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
-                        == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                        context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
+                                == android.content.pm.PackageManager.PERMISSION_GRANTED) {
                     startBluetoothDiscovery();
                 } else {
                     Log.w(TAG, "No se tienen permisos para iniciar Bluetooth discovery");
@@ -551,8 +550,8 @@ public class NearbyMultipeer {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if (context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_SCAN)
                         == android.content.pm.PackageManager.PERMISSION_GRANTED &&
-                    context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
-                        == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                        context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
+                                == android.content.pm.PackageManager.PERMISSION_GRANTED) {
                     startBluetoothDiscovery();
                 } else {
                     Log.w(TAG, "No se tienen permisos para iniciar Bluetooth discovery");
@@ -655,14 +654,14 @@ public class NearbyMultipeer {
         // Let's try with 0x0000 if iOS is expected to use that, or if iOS doesn't set one, this field might be ignored if data matches.
 
         byte[] manufacturerDataFilterBytes = new byte[]{
-            (byte)0x4E, (byte)0x4D, (byte)0x50, // "NMP"
-            (byte)0x01,                         // Protocol version 1
-            (byte)0x02                          // Device type iOS (0x02)
+                (byte) 0x4E, (byte) 0x4D, (byte) 0x50, // "NMP"
+                (byte) 0x01,                         // Protocol version 1
+                (byte) 0x02                          // Device type iOS (0x02)
         };
         byte[] manufacturerDataMaskBytes = new byte[]{
-            (byte)0xFF, (byte)0xFF, (byte)0xFF,
-            (byte)0xFF,
-            (byte)0xFF
+                (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
+                (byte) 0xFF,
+                (byte) 0xFF
         };
 
         ScanFilter manufacturerFilter = new ScanFilter.Builder()
@@ -736,14 +735,17 @@ public class NearbyMultipeer {
                         // For now, let's assume 0x0000 is what we're looking for or that getManufacturerSpecificData(id) can be tricky.
                         // A more robust way is to parse all service data or manufacturer data fields if the ID is uncertain.
                         // However, the filter should have already pre-qualified this.
-                        Map<Integer, byte[]> allManufacturerData = scanRecord.getManufacturerSpecificData();
-                        if(allManufacturerData != null && !allManufacturerData.isEmpty()){
-                             // Log all manufacturer data found
-                            for(Map.Entry<Integer, byte[]> entry : allManufacturerData.entrySet()){
-                                BleLogger.debug("Found Manufacturer Data with ID: " + entry.getKey());
-                                BleLogger.logHexData("Data for ID " + entry.getKey(), entry.getValue());
-                                if(entry.getKey() == 0x0000) { // Or check if any matches the expected pattern
-                                    manufacturerData = entry.getValue();
+                        SparseArray<byte[]> allManufacturerData = scanRecord.getManufacturerSpecificData();
+                        if (allManufacturerData != null && allManufacturerData.size() > 0) {
+                            // Log all manufacturer data found
+                            for (int i = 0; i < allManufacturerData.size(); i++) {
+                                int key = allManufacturerData.keyAt(i);
+                                byte[] value = allManufacturerData.valueAt(i);
+
+                                BleLogger.debug("Found Manufacturer Data with ID: " + key);
+                                BleLogger.logHexData("Data for ID " + key, value);
+                                if (key == 0x0000) { // Or check if any matches the expected pattern
+                                    manufacturerData = value;
                                     break;
                                 }
                             }
@@ -752,11 +754,11 @@ public class NearbyMultipeer {
 
                     if (manufacturerData != null && manufacturerData.length >= 5) {
                         // Verify NMP, protocol version, and iOS device type
-                        if (manufacturerData[0] == (byte)0x4E &&
-                            manufacturerData[1] == (byte)0x4D &&
-                            manufacturerData[2] == (byte)0x50 && // NMP
-                            manufacturerData[3] == (byte)0x01 && // Protocol v1
-                            manufacturerData[4] == (byte)0x02) { // Device Type iOS
+                        if (manufacturerData[0] == (byte) 0x4E &&
+                                manufacturerData[1] == (byte) 0x4D &&
+                                manufacturerData[2] == (byte) 0x50 && // NMP
+                                manufacturerData[3] == (byte) 0x01 && // Protocol v1
+                                manufacturerData[4] == (byte) 0x02) { // Device Type iOS
                             isIosDevice = true;
                             BleLogger.info("iOS device identified via Manufacturer Data. Name: " + deviceName);
                             BleLogger.logHexData("Matching Manufacturer Data", manufacturerData);
@@ -805,8 +807,7 @@ public class NearbyMultipeer {
                             mainHandler.post(() -> endpointDiscoveryCallback.onEndpointFound(deviceAddress, new DiscoveredEndpointInfo(serviceId, finalDeviceName)));
                         }
                     }
-                }
-                else if (deviceName.startsWith("Android_") || (scanRecord != null && scanRecord.getServiceUuids() != null &&
+                } else if (deviceName.startsWith("Android_") || (scanRecord != null && scanRecord.getServiceUuids() != null &&
                         scanRecord.getServiceUuids().contains(new ParcelUuid(serviceUUID)))) {
                     // Es un dispositivo Android con nuestro servicio
                     BleLogger.info("Dispositivo Android BLE encontrado: " + deviceName);
@@ -922,7 +923,7 @@ public class NearbyMultipeer {
             // This is an iOS device, connect via Bluetooth
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if (context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT) == android.content.pm.PackageManager.PERMISSION_GRANTED &&
-                    context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_SCAN) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                        context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_SCAN) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
                     connectToBluetoothDevice(endpointId, listener);
                 } else {
                     Log.e(TAG, "No se tienen permisos para conectar con dispositivos Bluetooth");
@@ -1033,10 +1034,10 @@ public class NearbyMultipeer {
                 mainHandler.post(() -> {
                     if (connectionLifecycleCallback != null) {
                         connectionLifecycleCallback.onConnectionResult(
-                            endpointId,
-                            new com.google.android.gms.nearby.connection.ConnectionResolution(
-                                com.google.android.gms.common.api.Status.RESULT_SUCCESS
-                            )
+                                endpointId,
+                                new com.google.android.gms.nearby.connection.ConnectionResolution(
+                                        com.google.android.gms.common.api.Status.RESULT_SUCCESS
+                                )
                         );
                     }
                 });
@@ -1296,6 +1297,7 @@ public class NearbyMultipeer {
     // Interfaz para manejar resultados asíncronos
     public interface OnResultListener {
         void onSuccess();
+
         void onFailure(String error);
     }
 
@@ -1363,12 +1365,12 @@ public class NearbyMultipeer {
                     mainHandler.post(() -> {
                         if (connectionLifecycleCallback != null) {
                             connectionLifecycleCallback.onConnectionInitiated(
-                                finalDeviceAddress,
-                                new ConnectionInfo(
-                                    finalDeviceName,
-                                    "",
-                                    true
-                                )
+                                    finalDeviceAddress,
+                                    new ConnectionInfo(
+                                            finalDeviceName,
+                                            "",
+                                            true
+                                    )
                             );
                         }
                     });
@@ -1468,10 +1470,10 @@ public class NearbyMultipeer {
                 mainHandler.post(() -> {
                     if (connectionLifecycleCallback != null) {
                         connectionLifecycleCallback.onConnectionResult(
-                            mmDeviceAddress,
-                            new com.google.android.gms.nearby.connection.ConnectionResolution(
-                                com.google.android.gms.common.api.Status.RESULT_SUCCESS
-                            )
+                                mmDeviceAddress,
+                                new com.google.android.gms.nearby.connection.ConnectionResolution(
+                                        com.google.android.gms.common.api.Status.RESULT_SUCCESS
+                                )
                         );
                     }
                 });
@@ -1491,10 +1493,10 @@ public class NearbyMultipeer {
                 mainHandler.post(() -> {
                     if (connectionLifecycleCallback != null) {
                         connectionLifecycleCallback.onConnectionResult(
-                            mmDeviceAddress,
-                            new com.google.android.gms.nearby.connection.ConnectionResolution(
-                                com.google.android.gms.common.api.Status.RESULT_INTERNAL_ERROR
-                            )
+                                mmDeviceAddress,
+                                new com.google.android.gms.nearby.connection.ConnectionResolution(
+                                        com.google.android.gms.common.api.Status.RESULT_INTERNAL_ERROR
+                                )
                         );
                     }
                 });
@@ -1583,8 +1585,8 @@ public class NearbyMultipeer {
                 mainHandler.post(() -> {
                     if (payloadCallback != null) {
                         payloadCallback.onPayloadReceived(
-                            mmDeviceAddress,
-                            Payload.fromBytes(message.getBytes())
+                                mmDeviceAddress,
+                                Payload.fromBytes(message.getBytes())
                         );
                     }
                 });
@@ -1604,13 +1606,13 @@ public class NearbyMultipeer {
                 mainHandler.post(() -> {
                     if (payloadCallback != null) {
                         payloadCallback.onPayloadTransferUpdate(
-                            mmDeviceAddress,
-                            new PayloadTransferUpdate.Builder()
-                                .setPayloadId(0)
-                                .setTotalBytes(bytes.length)
-                                .setBytesTransferred(bytes.length)
-                                .setStatus(PayloadTransferUpdate.Status.SUCCESS)
-                                .build()
+                                mmDeviceAddress,
+                                new PayloadTransferUpdate.Builder()
+                                        .setPayloadId(0)
+                                        .setTotalBytes(bytes.length)
+                                        .setBytesTransferred(bytes.length)
+                                        .setStatus(PayloadTransferUpdate.Status.SUCCESS)
+                                        .build()
                         );
                     }
                 });
