@@ -3,7 +3,7 @@ import MultipeerConnectivity
 import CoreBluetooth
 import UIKit
 
-@objc public class NearbyMultipeer: NSObject, CBPeripheralManagerDelegate, CBPeripheralDelegate {
+@objc public class NearbyMultipeer: NSObject, CBCentralManagerDelegate, CBPeripheralManagerDelegate, CBPeripheralDelegate {
 
     // MARK: - Properties
 
@@ -755,7 +755,7 @@ extension NearbyMultipeer: MCNearbyServiceBrowserDelegate {
 
 // MARK: - CBCentralManagerDelegate
 extension NearbyMultipeer {
-  func centralManagerDidUpdateState(_ central: CBCentralManager) {
+  @objc func centralManagerDidUpdateState(_ central: CBCentralManager) {
         switch central.state {
         case .poweredOn:
             print("Bluetooth central está encendido")
@@ -972,7 +972,7 @@ extension NearbyMultipeer {
 
 // MARK: - CBPeripheralDelegate
 extension NearbyMultipeer {
-  func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+  public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let error = error {
             print("Error al descubrir servicios: \(error.localizedDescription)")
             return
@@ -986,7 +986,7 @@ extension NearbyMultipeer {
         }
     }
 
-  func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+  public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if let error = error {
             print("Error al descubrir características: \(error.localizedDescription)")
             return
@@ -1007,7 +1007,7 @@ extension NearbyMultipeer {
         }
     }
 
-  func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+  public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if let error = error {
             print("Error al recibir datos: \(error.localizedDescription)")
             return
@@ -1027,7 +1027,7 @@ extension NearbyMultipeer {
         }
     }
 
-  func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+  public func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         if let error = error {
             print("Error al enviar datos: \(error.localizedDescription)")
             return
@@ -1039,7 +1039,7 @@ extension NearbyMultipeer {
 
 // MARK: - CBPeripheralManagerDelegate
 extension NearbyMultipeer {
-  func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
+  public func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         switch peripheral.state {
         case .poweredOn:
             print("Bluetooth peripheral está encendido")
@@ -1062,7 +1062,7 @@ extension NearbyMultipeer {
         }
     }
 
-  func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
+  public func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
         if let error = error {
             print("Error al añadir servicio: \(error.localizedDescription)")
             return
@@ -1071,7 +1071,7 @@ extension NearbyMultipeer {
         print("Servicio añadido correctamente")
     }
 
-  func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
+  public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
         // Respond with the device name
         if request.characteristic.uuid == NearbyMultipeer.CHARACTERISTIC_UUID {
             if let data = deviceName.data(using: .utf8) {
@@ -1085,7 +1085,7 @@ extension NearbyMultipeer {
         }
     }
 
-  func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
+  public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
         for request in requests {
             if request.characteristic.uuid == NearbyMultipeer.CHARACTERISTIC_UUID,
                let data = request.value,
