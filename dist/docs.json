@@ -1,0 +1,618 @@
+{
+  "api": {
+    "name": "NearbyMultipeerPlugin",
+    "slug": "nearbymultipeerplugin",
+    "docs": "",
+    "tags": [],
+    "methods": [
+      {
+        "name": "echo",
+        "signature": "(options: { value: string; }) => Promise<{ value: string; }>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ value: string; }"
+          }
+        ],
+        "returns": "Promise<{ value: string; }>",
+        "tags": [],
+        "docs": "Método de prueba para verificar que el plugin funciona",
+        "complexTypes": [],
+        "slug": "echo"
+      },
+      {
+        "name": "initialize",
+        "signature": "(options: { serviceId: string; serviceUUIDString?: string; }) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "Opciones de inicialización",
+            "type": "{ serviceId: string; serviceUUIDString?: string | undefined; }"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options Opciones de inicialización"
+          },
+          {
+            "name": "param",
+            "text": "options.serviceId Identificador lógico del servicio (obligatorio)"
+          },
+          {
+            "name": "param",
+            "text": "options.serviceUUIDString UUID BLE personalizado (opcional, por defecto: 'fa87c0d0-afac-11de-8a39-0800200c9a66').\nDebe ser igual en Android e iOS para que ambos sistemas puedan descubrirse por BLE."
+          }
+        ],
+        "docs": "Inicializa el plugin con el identificador de servicio y UUID opcional",
+        "complexTypes": [],
+        "slug": "initialize"
+      },
+      {
+        "name": "setStrategy",
+        "signature": "(options: { strategy: string; }) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "Estrategia a usar (\"P2P_STAR\", \"P2P_CLUSTER\", \"P2P_POINT_TO_POINT\")",
+            "type": "{ strategy: string; }"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options Estrategia a usar (\"P2P_STAR\", \"P2P_CLUSTER\", \"P2P_POINT_TO_POINT\")"
+          }
+        ],
+        "docs": "Configura la estrategia de conexión a usar",
+        "complexTypes": [],
+        "slug": "setstrategy"
+      },
+      {
+        "name": "startAdvertising",
+        "signature": "(options: { displayName?: string; }) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "Opciones de publicidad",
+            "type": "{ displayName?: string | undefined; }"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options Opciones de publicidad"
+          }
+        ],
+        "docs": "Comienza a anunciar el dispositivo para que otros puedan encontrarlo",
+        "complexTypes": [],
+        "slug": "startadvertising"
+      },
+      {
+        "name": "stopAdvertising",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "Detiene la publicidad del dispositivo",
+        "complexTypes": [],
+        "slug": "stopadvertising"
+      },
+      {
+        "name": "startDiscovery",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "Comienza a buscar dispositivos cercanos",
+        "complexTypes": [],
+        "slug": "startdiscovery"
+      },
+      {
+        "name": "stopDiscovery",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "Detiene la búsqueda de dispositivos cercanos",
+        "complexTypes": [],
+        "slug": "stopdiscovery"
+      },
+      {
+        "name": "connect",
+        "signature": "(options: { endpointId: string; displayName?: string; }) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "Opciones de conexión",
+            "type": "{ endpointId: string; displayName?: string | undefined; }"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options Opciones de conexión"
+          }
+        ],
+        "docs": "Solicita una conexión a un endpoint encontrado",
+        "complexTypes": [],
+        "slug": "connect"
+      },
+      {
+        "name": "acceptConnection",
+        "signature": "(options: { endpointId: string; }) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "ID del endpoint que solicita la conexión",
+            "type": "{ endpointId: string; }"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options ID del endpoint que solicita la conexión"
+          }
+        ],
+        "docs": "Acepta una solicitud de conexión entrante",
+        "complexTypes": [],
+        "slug": "acceptconnection"
+      },
+      {
+        "name": "rejectConnection",
+        "signature": "(options: { endpointId: string; }) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "ID del endpoint que solicita la conexión",
+            "type": "{ endpointId: string; }"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options ID del endpoint que solicita la conexión"
+          }
+        ],
+        "docs": "Rechaza una solicitud de conexión entrante",
+        "complexTypes": [],
+        "slug": "rejectconnection"
+      },
+      {
+        "name": "disconnectFromEndpoint",
+        "signature": "(options: { endpointId: string; }) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "ID del endpoint a desconectar",
+            "type": "{ endpointId: string; }"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options ID del endpoint a desconectar"
+          }
+        ],
+        "docs": "Desconecta de un endpoint específico",
+        "complexTypes": [],
+        "slug": "disconnectfromendpoint"
+      },
+      {
+        "name": "disconnect",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "Desconecta de todos los endpoints",
+        "complexTypes": [],
+        "slug": "disconnect"
+      },
+      {
+        "name": "sendMessage",
+        "signature": "(options: { endpointId: string; data: string; }) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "Opciones del mensaje",
+            "type": "{ endpointId: string; data: string; }"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options Opciones del mensaje"
+          }
+        ],
+        "docs": "Envía un mensaje a un endpoint conectado",
+        "complexTypes": [],
+        "slug": "sendmessage"
+      },
+      {
+        "name": "setLogLevel",
+        "signature": "(options: { logLevel: number; }) => Promise<void>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "Opciones de configuración de logs",
+            "type": "{ logLevel: number; }"
+          }
+        ],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options Opciones de configuración de logs"
+          },
+          {
+            "name": "param",
+            "text": "options.logLevel Nivel de logs (0=ninguno, 1=error, 2=warn, 3=info, 4=debug, 5=verbose)"
+          }
+        ],
+        "docs": "Establece el nivel de logs del plugin",
+        "complexTypes": [],
+        "slug": "setloglevel"
+      },
+      {
+        "name": "addListener",
+        "signature": "(eventName: 'connectionRequested', listenerFunc: (event: ConnectionRequestEvent) => void) => Promise<PluginListenerHandle> & PluginListenerHandle",
+        "parameters": [
+          {
+            "name": "eventName",
+            "docs": "Nombre del evento",
+            "type": "'connectionRequested'"
+          },
+          {
+            "name": "listenerFunc",
+            "docs": "Función que maneja el evento",
+            "type": "(event: ConnectionRequestEvent) => void"
+          }
+        ],
+        "returns": "Promise<PluginListenerHandle> & PluginListenerHandle",
+        "tags": [
+          {
+            "name": "param",
+            "text": "eventName Nombre del evento"
+          },
+          {
+            "name": "param",
+            "text": "listenerFunc Función que maneja el evento"
+          }
+        ],
+        "docs": "Agrega un listener para un evento específico",
+        "complexTypes": [
+          "PluginListenerHandle",
+          "ConnectionRequestEvent"
+        ],
+        "slug": "addlistenerconnectionrequested-"
+      },
+      {
+        "name": "addListener",
+        "signature": "(eventName: 'connectionResult', listenerFunc: (event: ConnectionResultEvent) => void) => Promise<PluginListenerHandle> & PluginListenerHandle",
+        "parameters": [
+          {
+            "name": "eventName",
+            "docs": "",
+            "type": "'connectionResult'"
+          },
+          {
+            "name": "listenerFunc",
+            "docs": "",
+            "type": "(event: ConnectionResultEvent) => void"
+          }
+        ],
+        "returns": "Promise<PluginListenerHandle> & PluginListenerHandle",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "PluginListenerHandle",
+          "ConnectionResultEvent"
+        ],
+        "slug": "addlistenerconnectionresult-"
+      },
+      {
+        "name": "addListener",
+        "signature": "(eventName: 'endpointFound', listenerFunc: (event: EndpointFoundEvent) => void) => Promise<PluginListenerHandle> & PluginListenerHandle",
+        "parameters": [
+          {
+            "name": "eventName",
+            "docs": "",
+            "type": "'endpointFound'"
+          },
+          {
+            "name": "listenerFunc",
+            "docs": "",
+            "type": "(event: EndpointFoundEvent) => void"
+          }
+        ],
+        "returns": "Promise<PluginListenerHandle> & PluginListenerHandle",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "PluginListenerHandle",
+          "EndpointFoundEvent"
+        ],
+        "slug": "addlistenerendpointfound-"
+      },
+      {
+        "name": "addListener",
+        "signature": "(eventName: 'endpointLost', listenerFunc: (event: EndpointLostEvent) => void) => Promise<PluginListenerHandle> & PluginListenerHandle",
+        "parameters": [
+          {
+            "name": "eventName",
+            "docs": "",
+            "type": "'endpointLost'"
+          },
+          {
+            "name": "listenerFunc",
+            "docs": "",
+            "type": "(event: EndpointLostEvent) => void"
+          }
+        ],
+        "returns": "Promise<PluginListenerHandle> & PluginListenerHandle",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "PluginListenerHandle",
+          "EndpointLostEvent"
+        ],
+        "slug": "addlistenerendpointlost-"
+      },
+      {
+        "name": "addListener",
+        "signature": "(eventName: 'message', listenerFunc: (event: MessageReceivedEvent) => void) => Promise<PluginListenerHandle> & PluginListenerHandle",
+        "parameters": [
+          {
+            "name": "eventName",
+            "docs": "",
+            "type": "'message'"
+          },
+          {
+            "name": "listenerFunc",
+            "docs": "",
+            "type": "(event: MessageReceivedEvent) => void"
+          }
+        ],
+        "returns": "Promise<PluginListenerHandle> & PluginListenerHandle",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "PluginListenerHandle",
+          "MessageReceivedEvent"
+        ],
+        "slug": "addlistenermessage-"
+      },
+      {
+        "name": "addListener",
+        "signature": "(eventName: 'payloadTransferUpdate', listenerFunc: (event: PayloadTransferUpdateEvent) => void) => Promise<PluginListenerHandle> & PluginListenerHandle",
+        "parameters": [
+          {
+            "name": "eventName",
+            "docs": "",
+            "type": "'payloadTransferUpdate'"
+          },
+          {
+            "name": "listenerFunc",
+            "docs": "",
+            "type": "(event: PayloadTransferUpdateEvent) => void"
+          }
+        ],
+        "returns": "Promise<PluginListenerHandle> & PluginListenerHandle",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "PluginListenerHandle",
+          "PayloadTransferUpdateEvent"
+        ],
+        "slug": "addlistenerpayloadtransferupdate-"
+      },
+      {
+        "name": "removeAllListeners",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "Remueve todos los listeners registrados",
+        "complexTypes": [],
+        "slug": "removealllisteners"
+      }
+    ],
+    "properties": []
+  },
+  "interfaces": [
+    {
+      "name": "PluginListenerHandle",
+      "slug": "pluginlistenerhandle",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "remove",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "() => Promise<void>"
+        }
+      ]
+    },
+    {
+      "name": "ConnectionRequestEvent",
+      "slug": "connectionrequestevent",
+      "docs": "Evento cuando se recibe una solicitud de conexión",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "endpointId",
+          "tags": [],
+          "docs": "ID del endpoint que solicita la conexión",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "endpointName",
+          "tags": [],
+          "docs": "Nombre del endpoint",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "authenticationToken",
+          "tags": [],
+          "docs": "Token de autenticación para verificar la identidad",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "isIncomingConnection",
+          "tags": [],
+          "docs": "Si es una conexión entrante o saliente",
+          "complexTypes": [],
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "name": "ConnectionResultEvent",
+      "slug": "connectionresultevent",
+      "docs": "Evento con el resultado de una conexión",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "endpointId",
+          "tags": [],
+          "docs": "ID del endpoint",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "tags": [],
+          "docs": "Código de estado de la conexión\n0 = éxito\n-1 = error",
+          "complexTypes": [],
+          "type": "number"
+        }
+      ]
+    },
+    {
+      "name": "EndpointFoundEvent",
+      "slug": "endpointfoundevent",
+      "docs": "Evento cuando se encuentra un nuevo endpoint",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "endpointId",
+          "tags": [],
+          "docs": "ID del endpoint encontrado",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "endpointName",
+          "tags": [],
+          "docs": "Nombre del endpoint",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "serviceId",
+          "tags": [],
+          "docs": "ID del servicio del endpoint",
+          "complexTypes": [],
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "EndpointLostEvent",
+      "slug": "endpointlostevent",
+      "docs": "Evento cuando se pierde un endpoint",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "endpointId",
+          "tags": [],
+          "docs": "ID del endpoint perdido",
+          "complexTypes": [],
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "MessageReceivedEvent",
+      "slug": "messagereceivedevent",
+      "docs": "Evento cuando se recibe un mensaje",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "endpointId",
+          "tags": [],
+          "docs": "ID del endpoint que envió el mensaje",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "data",
+          "tags": [],
+          "docs": "Datos del mensaje",
+          "complexTypes": [],
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "PayloadTransferUpdateEvent",
+      "slug": "payloadtransferupdateevent",
+      "docs": "Evento con información de progreso de transferencia",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "endpointId",
+          "tags": [],
+          "docs": "ID del endpoint",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "bytesTransferred",
+          "tags": [],
+          "docs": "Bytes transferidos",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
+          "name": "totalBytes",
+          "tags": [],
+          "docs": "Total de bytes a transferir",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
+          "name": "status",
+          "tags": [],
+          "docs": "Estado de la transferencia\n2 = en progreso\n3 = completado",
+          "complexTypes": [],
+          "type": "number"
+        }
+      ]
+    }
+  ],
+  "enums": [],
+  "typeAliases": [],
+  "pluginConfigs": []
+}
