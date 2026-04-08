@@ -755,7 +755,7 @@ extension NearbyMultipeer: MCNearbyServiceBrowserDelegate {
 
 // MARK: - CBCentralManagerDelegate
 extension NearbyMultipeer {
-  @objc func centralManagerDidUpdateState(_ central: CBCentralManager) {
+  @objc public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         switch central.state {
         case .poweredOn:
             print("Bluetooth central está encendido")
@@ -778,7 +778,7 @@ extension NearbyMultipeer {
         }
     }
 
-  func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+  @objc public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         // Define endpointName, shouldNotifyDevice, and detectionReason locally
         let endpointName = peripheral.name ?? advertisementData[CBAdvertisementDataLocalNameKey] as? String ?? "UnknownDevice"
         var shouldNotifyDevice = true // Default behavior for now, make it mutable if logic requires
@@ -916,7 +916,7 @@ extension NearbyMultipeer {
         }
     }
 
-  func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+  @objc public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         let endpointId = peripheral.identifier.uuidString
         print("Conectado a dispositivo Bluetooth: \(peripheral.name ?? endpointId)")
 
@@ -935,7 +935,7 @@ extension NearbyMultipeer {
         }
     }
 
-  func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+  @objc public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         let endpointId = peripheral.identifier.uuidString
         print("Error al conectar con dispositivo Bluetooth: \(peripheral.name ?? endpointId), error: \(error?.localizedDescription ?? "unknown")")
 
@@ -945,7 +945,7 @@ extension NearbyMultipeer {
         }
     }
 
-  func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+  @objc public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         let endpointId = peripheral.identifier.uuidString
         print("Desconectado de dispositivo Bluetooth: \(peripheral.name ?? endpointId)")
 
